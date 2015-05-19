@@ -20,3 +20,9 @@
 - name: reload the firewall
   shell: firewall-cmd --reload
   when: result|success
+
+- name: install MySQL
+  yum: name=mariadb-server state=present
+
+- name: start MariaDB service
+  service: name=mariadb state=started enabled=on
