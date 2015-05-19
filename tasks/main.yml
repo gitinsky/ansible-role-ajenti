@@ -1,0 +1,22 @@
+---
+- name: download http://repo.ajenti.org/ajenti-repo-1.0-1.noarch.rpm
+  get_url: url=http://repo.ajenti.org/ajenti-repo-1.0-1.noarch.rpm dest=/root/ajenti-repo-1.0-1.noarch.rpm
+
+- name: install Ajenti repo
+  yum: name=/root/ajenti-repo-1.0-1.noarch.rpm state=present
+
+- name: install Ajenti
+  yum: name=ajenti state=present
+
+- name: check if firewall-cmd exists
+  shell: which firewall-cmd
+  ignore_errors: True
+  register: result
+
+- name: add a firewall rule to enable port 8000
+  shell: firewall-cmd --permanent --zone=public --add-port=8000/tcp
+  when: result|success
+
+- name: reload the firewall
+  shell: firewall-cmd --reload
+  when: result|success
